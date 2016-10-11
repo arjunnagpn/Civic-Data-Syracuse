@@ -15,12 +15,13 @@ library(shinydashboard)
 library(DT)
 library(leaflet)
 library(readr)
+library(dplyr)
 library(magrittr)
 
 # Read "potholes (1).csv" file:
 # Taken from: https://cityofsyracuse.github.io/RoadsChallenge/data/potholes.csv
 
-potholes.load <- read.csv("C:/Arjun/SU/Other/Projects/Civic Data Hackathon/potholes (1).csv")
+potholes.load <- read.csv("potholes (1).csv")
 
 # Clean the Data
 
@@ -83,8 +84,15 @@ month.map <- data.frame()
 # THANK YOU
 ### !!!!! ###
 
-street.shpfile <- readOGR("C:/Arjun/SU/Other/Projects/Civic Data Hackathon/street_shapefile", "streets")
-street.shpfile <- spTransform(street.shpfile, CRS("+proj=longlat +ellps=GRS80"))
+# The following steps were executed for saving file as RDS:
+
+# street.shpfile <- readOGR(".", "streets")
+# street.shpfile <- spTransform(street.shpfile, CRS("+proj=longlat +ellps=GRS80"))
+# saveRDS(street.shpfile, "street.shpfile.shp")
+
+# Now, read the above file as RDS for faster performance:
+
+street.shpfile <- readRDS("street.shpfile.shp")
 
 # Read thelast 5 years street data files:
 # RoadRatings2011.csv (Taken From: https://cityofsyracuse.github.io/RoadsChallenge/data/roads/RoadRatings2011.csv)
@@ -93,78 +101,85 @@ street.shpfile <- spTransform(street.shpfile, CRS("+proj=longlat +ellps=GRS80"))
 # RoadRatings2014.csv (Taken From: https://cityofsyracuse.github.io/RoadsChallenge/data/roads/RoadRatings2014.csv)
 # RoadRatings2015.csv (Taken From: https://cityofsyracuse.github.io/RoadsChallenge/data/roads/RoadRatings2015.csv)
 
-road2011.df <- read.csv("C:/Arjun/SU/Other/Projects/Civic Data Hackathon/Road Ratings/RoadRatings2011.csv")[,c(
-  "streetName",
-  "streetType",
-  "overall",
-  "crack",
-  "patch",
-  "flushOil",
-  "class",
-  "pavement",
-  "streetID"
-)]
-road2011.df$year <- 2011
+# road2011.df <- read.csv("RoadRatings2011.csv")[,c(
+#   "streetName",
+#   "streetType",
+#   "overall",
+#   "crack",
+#   "patch",
+#   "flushOil",
+#   "class",
+#   "pavement",
+#   "streetID"
+# )]
+# road2011.df$year <- 2011
+# 
+# road2012.df <- read.csv("RoadRatings2012.csv")[,c(
+#   "streetName",
+#   "streetType",
+#   "overall",
+#   "crack",
+#   "patch",
+#   "flushOil",
+#   "class",
+#   "pavement",
+#   "streetID"
+# )]
+# road2012.df$year <- 2012
+# 
+# road2013.df <- read.csv("RoadRatings2013.csv")[,c(
+#   "streetName",
+#   "streetType",
+#   "overall",
+#   "crack",
+#   "patch",
+#   "flushOil",
+#   "class",
+#   "pavement",
+#   "streetID"
+# )]
+# road2013.df$year <- 2013
+# 
+# road2014.df <- read.csv("RoadRatings2014.csv")[,c(
+#   "streetName",
+#   "streetType",
+#   "overall",
+#   "crack",
+#   "patch",
+#   "flushOil",
+#   "class",
+#   "pavement",
+#   "streetID"
+# )]
+# road2014.df$year <- 2014
+# 
+# road2015.df <- read.csv("RoadRatings2015.csv")[,c(
+#   "streetName",
+#   "streetType",
+#   "overall",
+#   "crack",
+#   "patch",
+#   "flushOil",
+#   "class",
+#   "pavement",
+#   "streetID"
+# )]
+# road2015.df$year <- 2015
+# 
+# road.df <- rbind(
+#   road2011.df,
+#   road2012.df,
+#   road2013.df,
+#   road2014.df,
+#   road2015.df
+# )
 
-road2012.df <- read.csv("C:/Arjun/SU/Other/Projects/Civic Data Hackathon/Road Ratings/RoadRatings2012.csv")[,c(
-  "streetName",
-  "streetType",
-  "overall",
-  "crack",
-  "patch",
-  "flushOil",
-  "class",
-  "pavement",
-  "streetID"
-)]
-road2012.df$year <- 2012
+# The above variables: road2011.df, road2012.df, road2013.df, road2014.df, road2015.df were combined into one variable: road.df.
+# road.df was saved as RDS to increase performance using the steps mentioned below:
+# saveRDS(road.df, "road.df")
+# Read the above variable as RDS for faster performance:
 
-road2013.df <- read.csv("C:/Arjun/SU/Other/Projects/Civic Data Hackathon/Road Ratings/RoadRatings2013.csv")[,c(
-  "streetName",
-  "streetType",
-  "overall",
-  "crack",
-  "patch",
-  "flushOil",
-  "class",
-  "pavement",
-  "streetID"
-)]
-road2013.df$year <- 2013
-
-road2014.df <- read.csv("C:/Arjun/SU/Other/Projects/Civic Data Hackathon/Road Ratings/RoadRatings2014.csv")[,c(
-  "streetName",
-  "streetType",
-  "overall",
-  "crack",
-  "patch",
-  "flushOil",
-  "class",
-  "pavement",
-  "streetID"
-)]
-road2014.df$year <- 2014
-
-road2015.df <- read.csv("C:/Arjun/SU/Other/Projects/Civic Data Hackathon/Road Ratings/RoadRatings2015.csv")[,c(
-  "streetName",
-  "streetType",
-  "overall",
-  "crack",
-  "patch",
-  "flushOil",
-  "class",
-  "pavement",
-  "streetID"
-)]
-road2015.df$year <- 2015
-
-road.df <- rbind(
-  road2011.df,
-  road2012.df,
-  road2013.df,
-  road2014.df,
-  road2015.df
-)
+road.df <- readRDS("road.df")
 
 # Clean the Data
 
@@ -228,6 +243,132 @@ shinyServer(
       potholes.graph <- potholes.graph[potholes.graph$year == input$year,]
       potholes.graph <- potholes.graph[potholes.graph$month == input$month,]
       
+    })
+    
+    # Data for Dashboard
+    
+    output$progressBox1a <- renderValueBox({
+      valueBox(
+        nrow(potholes.load[potholes.load$year == 2016,]), 
+        "Potholes Fixed This Year", 
+        icon = icon("road"),
+        color = "purple"
+      )
+    })
+    
+    output$progressBox1b <- renderValueBox({
+      valueBox(
+        highest.potholes.st, 
+        "Highest Potholes Fixed", 
+        icon = icon("building-o"),
+        color = "purple"
+      )
+    })
+    
+    output$progressBox1c <- renderValueBox({
+      valueBox(
+        highest.potholes.veh, 
+        "Durapatcher With Most Potholes Fixed", 
+        icon = icon("bus"),
+        color = "purple"
+      )
+    })
+    
+    output$progressBox2a <- renderValueBox({
+      valueBox(
+        low.road.sat.st, 
+        "Street With Least Overall Satisfaction", 
+        icon = icon("thumbs-o-down"),
+        color = "purple"
+      )
+    })
+    
+    output$progressBox2b <- renderValueBox({
+      valueBox(
+        low.crack.sat.st, 
+        "Street With Least Crack Rating", 
+        icon = icon("chain-broken"),
+        color = "purple"
+      )
+    })
+    
+    output$progressBox2c <- renderValueBox({
+      valueBox(
+        low.patch.sat.st, 
+        "Street With Least Patch Rating", 
+        icon = icon("repeat"),
+        color = "purple"
+      )
+    })
+    
+    # Dynamic Input Widgets
+    
+    output$o.year <- renderUI({
+      selectInput(
+        "year",
+        "Select Year",
+        choices = all.years,
+        selected = all.years[1]
+      )
+    })
+    
+    output$o.street.abb2 <- renderUI({
+      selectizeInput(
+        'street.abb2', 
+        'Search Street',
+        choices = allstreets,
+        multiple = TRUE,
+        selected = allstreets[2:6]
+      )
+    })
+    
+    output$o.street.abb <- renderUI({
+      selectizeInput(
+        'street.abb', 
+        'Search Street',
+        choices = allstreets,
+        multiple = TRUE,
+        selected = "All"
+      )
+    })
+    
+    output$o.year2 <- renderUI({
+      selectInput(
+        "year2",
+        "Select Year",
+        choices = all.years2,
+        selected = all.years2[5]
+      )
+    })
+    
+    output$o.oil <- renderUI({
+      selectizeInput(
+        "oil",
+        "Flush Oil Type",
+        choices = all.oil,
+        multiple = T,
+        selected = "All"
+      )
+    })
+    
+    output$o.class <- renderUI({
+      selectizeInput(
+        "class",
+        "Class Type",
+        choices = all.class,
+        multiple = T,
+        selected = "All"
+      )
+    })
+    
+    output$o.pavement <- renderUI({
+      selectizeInput(
+        "pavement",
+        "Pavement Type",
+        multiple = T,
+        choices = all.pavement,
+        selected = "All"
+      )
     })
     
     # Prepare data for Potholes Map
@@ -522,6 +663,8 @@ shinyServer(
         "Pavement Type",
         "Year"
       )
+      
+      rownames(filtered.road.tab) <- NULL
       
       return(filtered.road.tab)
       
