@@ -4,6 +4,20 @@
 # Syracuse University - Spring 2017
 # Oct 9, 2016
 
+# Load required packages to library
+
+library(RColorBrewer)
+library(ggmap) 
+library(htmltools)
+library(rgdal)
+library(shiny)
+library(shinydashboard)
+library(DT)
+library(leaflet)
+library(readr)
+library(dplyr)
+library(magrittr)
+
 shinyUI(
   
   dashboardPage(
@@ -46,26 +60,11 @@ shinyUI(
                   
                   br(),
                   
-                  valueBox(
-                    nrow(potholes.load[potholes.load$year == 2016,]), 
-                    "Potholes Fixed This Year", 
-                    icon = icon("road"),
-                    color = "purple"
-                  ),
+                  valueBoxOutput("progressBox1a"),
                   
-                  valueBox(
-                    highest.potholes.st, 
-                    "Highest Potholes Fixed", 
-                    icon = icon("building-o"),
-                    color = "purple"
-                  ),
+                  valueBoxOutput("progressBox1b"),
                   
-                  valueBox(
-                    highest.potholes.veh, 
-                    "Durapatcher With Most Potholes Fixed", 
-                    icon = icon("bus"),
-                    color = "purple"
-                  )
+                  valueBoxOutput("progressBox1c")
                 ),
                 
                 h2("Street Information"),
@@ -74,26 +73,11 @@ shinyUI(
                   
                   br(),
                   
-                  valueBox(
-                    low.road.sat.st, 
-                    "Street With Least Overall Satisfaction", 
-                    icon = icon("thumbs-o-down"),
-                    color = "purple"
-                  ),
+                  valueBoxOutput("progressBox2a"),
                   
-                  valueBox(
-                    low.crack.sat.st, 
-                    "Street With Least Crack Rating", 
-                    icon = icon("chain-broken"),
-                    color = "purple"
-                  ),
+                  valueBoxOutput("progressBox2b"),
                   
-                  valueBox(
-                    low.patch.sat.st, 
-                    "Street With Least Patch Rating", 
-                    icon = icon("repeat"),
-                    color = "purple"
-                  )
+                  valueBoxOutput("progressBox2c")
                 )
 
         ),
@@ -106,13 +90,7 @@ shinyUI(
                   box(status = "warning",
                       
                       br(),
-                      
-                      selectInput(
-                        "year",
-                        "Select Year",
-                        choices = all.years,
-                        selected = all.years[1]
-                    ),
+                      uiOutput("o.year"),
                     
                     br(),
                     
@@ -152,13 +130,7 @@ shinyUI(
                          ),
                   
                   box(status = "warning",
-                      selectizeInput(
-                        'street.abb2', 
-                        'Search Street',
-                        choices = allstreets,
-                        multiple = TRUE,
-                        selected = allstreets[2:6]
-                      ),
+                      uiOutput("o.street.abb2"),
                       plotOutput("o.bar2"),
                       width = 8
                   )
@@ -186,13 +158,7 @@ shinyUI(
                       ),
                       br(),
                       
-                      selectizeInput(
-                        'street.abb', 
-                        'Search Street',
-                        choices = allstreets,
-                        multiple = TRUE,
-                        selected = "All"
-                      ),
+                      uiOutput("o.street.abb"),
                       br(),
                       
                       selectInput(
@@ -254,42 +220,19 @@ shinyUI(
                       
                       br(),
                       
-                      selectInput(
-                        "year2",
-                        "Select Year",
-                        choices = all.years2,
-                        selected = all.years2[5]
-                      ),
+                      uiOutput("o.year2"),
                       
                       br(),
                       
-                      selectizeInput(
-                        "oil",
-                        "Flush Oil Type",
-                        choices = all.oil,
-                        multiple = T,
-                        selected = "All"
-                      ),
+                      uiOutput("o.oil"),
                       
                       br(),
                       
-                      selectizeInput(
-                        "class",
-                        "Class Type",
-                        choices = all.class,
-                        multiple = T,
-                        selected = "All"
-                      ),
+                      uiOutput("o.class"),
                       
                       br(),
                       
-                      selectizeInput(
-                        "pavement",
-                        "Pavement Type",
-                        multiple = T,
-                        choices = all.pavement,
-                        selected = "All"
-                      ),
+                      uiOutput("o.pavement"),
                       
                       width = 3
                       
